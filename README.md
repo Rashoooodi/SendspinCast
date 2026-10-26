@@ -1,47 +1,38 @@
-# Sendspin Cast (Android → Music Assistant)
+# Sendspin Cast
 
-**Experimental v0.1.0** · Android 10+ · Kotlin · No root or Shizuku required
+Turn Android playback audio into a Music Assistant radio stream, then play it through your Sendspin speaker groups.
 
-A small Android app that captures *permitted* app playback audio via Android MediaProjection / AudioPlaybackCapture, encodes it to AAC-LC at 48 kHz stereo, and publishes an HTTP live radio stream. Play that stream in Music Assistant on your existing Sendspin speaker group.
+### v0.2.0-alpha: Essentials-inspired UI
 
-**Note:** This first version is **not a native Sendspin source**. It uses a Music Assistant radio URL as the bridge. No APK has been compiled or tested yet.
+- Material 3 styling with device dynamic dark colors on Android 12+.
+- Animated ambient gradients, pulsing waveform orb, responsive casting controls.
+- Real frosted **progressive backdrop blur** using [Haze](https://github.com/chrisbanes/haze) (Apache-2.0). No screenshots or source code copied from Essentials or BitChord.
+- Private stream key hidden on screen, explicit Copy / Share actions.
+- **Audio engine unchanged** from working v0.1: AAC-LC, 48 kHz stereo, local HTTP streaming, Android AudioPlaybackCapture.
 
-## Build
+### Install
 
-Requires Android Studio (Android SDK 35 and JDK 17).
+Open [GitHub Actions](https://github.com/Rashoooodi/SendspinCast/actions), choose the latest successful **Build Android APK** run, download `SendspinCast-debug-apk` from Artifacts, extract and install the APK.
 
-1. Open this repository as a project in Android Studio and sync Gradle.
-2. Run **Build → Build APK(s)**.
-3. Install `app/build/outputs/apk/debug/app-debug.apk` on your phone.
+### Use
 
-On Windows you can instead run `./build-windows.ps1` in PowerShell; on macOS/Linux run `./build-linux-mac.sh`. These scripts download Gradle 8.10.2; an installed Android SDK and JDK are still required.
+1. On Android 10+, open the app and tap **Start casting**.
+2. Accept Android's screen/audio capture permission (the app captures **audio only**).
+3. Copy the private stream link.
+4. In Music Assistant → Radio, add a station by URL and paste the link.
+5. Play it on a single speaker or Sendspin group.
 
-## Use
+`http://PHONE_IP:8765/live.aac?key=PRIVATE_TOKEN`
 
-1. Connect your Android phone and Music Assistant server so the server can reach the phone's LAN IP on TCP port **8765**.
-2. Open the app, press **Start audio cast**, and approve microphone/audio recording and screen-capture consent.
-3. Press **Copy stream URL**.
-4. In Music Assistant, add a custom radio station **from URL** using the copied private link.
-5. Play that station on your Sendspin speaker group. Use the app's **Stop audio cast** button when finished.
+### Technical notes
 
-Stream URL format: `http://PHONE_IP:8765/live.aac?key=RANDOM_PRIVATE_TOKEN`
+- Android only permits audio capture from apps whose playback-capture policy allows it. DRM/calls may be silent.
+- The HTTP stream is **not encrypted**. Don't share the URL outside your trusted LAN/tailnet. Anyone with network access and the key can listen while casting.
+- Music Assistant radio buffering may add several seconds; on a tested setup, playback lag was ~8 seconds with Music Assistant and ~2–3 seconds with VLC.
+- No root or Shizuku is needed. Phone and Music Assistant server must be mutually reachable.
+- Build from source with Android Studio + JDK 17 + Android SDK 35. See `build-windows.ps1` or `build-linux-mac.sh` as alternatives.
+- This is an alpha build. The UI has not been device-tested across OEMs.
 
-## Test
+### Attribution
 
-- Open `http://PHONE_IP:8765/health` from a machine on your LAN. It should say `Sendspin Cast is running`.
-- Test the private URL in VLC or `ffplay -nodisp 'http://PHONE_IP:8765/live.aac?key=YOUR_KEY'` before adding it to Music Assistant.
-- If the URL times out, check phone/server routing and Wi-Fi client isolation. If silent, try playing audio from an app that permits playback capture.
-
-## Limits and security
-
-- Android only allows capturing audio from apps whose capture policy permits it. DRM media, calls and restricted apps may be silent. Shizuku by itself cannot override this.
-- Music Assistant's live radio playback buffer may introduce **seconds of latency**. Speakers in the group can stay synchronized with each other but not necessarily with video on your phone.
-- HTTP audio is **unencrypted**, and anyone who possesses the private link and can reach the phone can listen to it while running. Use only on trusted LANs or protected VPNs; don't publish the URL.
-- The phone must stay connected and broadcasting. A changing phone IP requires updating the radio station URL.
-- This is a proof of concept, not a finished or device-tested release.
-
-## References
-
-- [Android AudioPlaybackCapture](https://developer.android.com/media/platform/av-capture)
-- [Music Assistant documentation](https://www.music-assistant.io/)
-- [Sendspin source protocol](https://github.com/Sendspin/spec/blob/main/roles/source/v1.md)
+Inspired by modern Material 3 Expressive and Android glass UIs, including [Essentials](https://www.sameerasw.com/essentials) and [BitChord](https://github.com/search?q=BitChord&type=repositories). This project does not include or claim their branding, artwork, or proprietary assets. Haze is used under its Apache-2.0 license.
