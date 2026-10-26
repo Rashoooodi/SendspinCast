@@ -36,3 +36,4 @@ Open [GitHub Actions](https://github.com/Rashoooodi/SendspinCast/actions), choos
 ### Attribution
 
 Inspired by modern Material 3 Expressive and Android glass UIs, including [Essentials](https://www.sameerasw.com/essentials) and [BitChord](https://github.com/search?q=BitChord&type=repositories). This project does not include or claim their branding, artwork, or proprietary assets. Haze is used under its Apache-2.0 license.
+
