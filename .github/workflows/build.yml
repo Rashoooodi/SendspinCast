@@ -37,6 +37,23 @@ jobs:
       - name: Compile debug APK
         run: gradle --no-daemon assembleDebug
 
+      - name: Sign APK with v1, v2 and v3 schemes
+        run: |
+          set -euo pipefail
+          APK="app/build/outputs/apk/debug/app-debug.apk"
+          BT="$ANDROID_HOME/build-tools/35.0.0"
+          KEYSTORE="$HOME/.android/debug.keystore"
+          if [ ! -f "$KEYSTORE" ]; then
+            mkdir -p "$HOME/.android"
+            keytool -genkeypair -v -keystore "$KEYSTORE" -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US" -noprompt
+          fi
+          "$BT/zipalign" -f 4 "$APK" "$RUNNER_TEMP/aligned.apk"
+          "$BT/apksigner" sign --ks "$KEYSTORE" --ks-key-alias androiddebugkey \
+            --ks-pass pass:android --key-pass pass:android \
+            --v1-signing-enabled true --v2-signing-enabled true --v3-signing-enabled true \
+            --out "$RUNNER_TEMP/signed.apk" "$RUNNER_TEMP/aligned.apk"
+          cp "$RUNNER_TEMP/signed.apk" "$APK"
+
       - name: Verify APK signatures and zip alignment
         run: |
           APK="app/build/outputs/apk/debug/app-debug.apk"
