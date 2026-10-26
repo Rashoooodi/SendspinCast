@@ -10,8 +10,15 @@ android {
         applicationId = "dev.rj.sendspincast"
         minSdk = 29
         targetSdk = 34
-        versionCode = 2
-        versionName = "0.2.0-alpha"
+        versionCode = 3
+        versionName = "0.2.1-alpha"
+    }
+    signingConfigs {
+        getByName("debug") {
+            enableV1Signing = true
+            enableV2Signing = true
+            enableV3Signing = true
+        }
     }
     buildFeatures { compose = true }
     compileOptions {
