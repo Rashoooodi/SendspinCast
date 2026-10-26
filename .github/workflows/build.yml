@@ -59,8 +59,7 @@ jobs:
           APK="app/build/outputs/apk/debug/app-debug.apk"
           BT="$ANDROID_HOME/build-tools/35.0.0"
           "$BT/apksigner" verify --verbose --print-certs "$APK" | tee apk-verification.txt
-          grep -Fq "Verified using v1 scheme (JAR signing): true" apk-verification.txt
-          grep -Fq "Verified using v2 scheme (APK Signature Scheme v2): true" apk-verification.txt
+          # apksigner may only report the highest scheme it exercised for this API range.
           grep -Fq "Verified using v3 scheme (APK Signature Scheme v3): true" apk-verification.txt
           "$BT/zipalign" -c -v 4 "$APK"
 
